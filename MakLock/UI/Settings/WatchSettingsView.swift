@@ -15,7 +15,9 @@ struct WatchSettingsView: View {
             Section {
                 bluetoothStatusRow
 
-                if watchService.bluetoothState == .poweredOn || watchService.bluetoothState == .unknown {
+                if watchService.bluetoothState == .poweredOn
+                    || watchService.bluetoothState == .unknown
+                {
                     Toggle("Use Apple Watch to unlock", isOn: $settings.useWatchUnlock)
                         .onChange(of: settings.useWatchUnlock) { enabled in
                             Defaults.shared.appSettings = settings
@@ -34,14 +36,18 @@ struct WatchSettingsView: View {
                         HStack {
                             Image(systemName: "applewatch")
                                 .font(.system(size: 24))
-                                .foregroundColor(watchService.isWatchInRange ? MakLockColors.success : MakLockColors.textSecondary)
+                                .foregroundColor(
+                                    watchService.isWatchInRange
+                                        ? MakLockColors.success : MakLockColors.textSecondary)
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Apple Watch")
                                     .font(MakLockTypography.body)
                                 Text(watchService.isWatchInRange ? "In range" : "Out of range")
                                     .font(MakLockTypography.caption)
-                                    .foregroundColor(watchService.isWatchInRange ? MakLockColors.success : .secondary)
+                                    .foregroundColor(
+                                        watchService.isWatchInRange
+                                            ? MakLockColors.success : .secondary)
                             }
 
                             Spacer()
@@ -62,7 +68,8 @@ struct WatchSettingsView: View {
                             .contextMenu {
                                 Button("Copy") {
                                     NSPasteboard.general.clearContents()
-                                    NSPasteboard.general.setString(watchID.uuidString, forType: .string)
+                                    NSPasteboard.general.setString(
+                                        watchID.uuidString, forType: .string)
                                 }
                             }
                     } else {
@@ -79,6 +86,22 @@ struct WatchSettingsView: View {
                             .font(MakLockTypography.caption)
                             .foregroundColor(.secondary)
                     }
+                }
+
+                Section("Range Lock") {
+                    Toggle(
+                        "Lock protected apps when Watch leaves range",
+                        isOn: $settings.lockWhenWatchLeavesRange
+                    )
+                    .onChange(of: settings.lockWhenWatchLeavesRange) { _ in
+                        Defaults.shared.appSettings = settings
+                    }
+
+                    Text(
+                        "MakLock waits for three weak readings or 15 seconds without a signal. Bluetooth reconnects alone never lock your apps."
+                    )
+                    .font(MakLockTypography.caption)
+                    .foregroundColor(.secondary)
                 }
 
                 Section("Sensitivity") {
@@ -99,17 +122,21 @@ struct WatchSettingsView: View {
                                 .monospacedDigit()
                         }
 
-                        Text("Lower sensitivity means the Watch can be farther away. Higher sensitivity requires the Watch to be closer.")
-                            .font(MakLockTypography.caption)
-                            .foregroundColor(.secondary)
+                        Text(
+                            "Lower sensitivity means the Watch can be farther away. Higher sensitivity requires the Watch to be closer."
+                        )
+                        .font(MakLockTypography.caption)
+                        .foregroundColor(.secondary)
                     }
                 }
             }
 
             Section("How it works") {
-                Text("When your Apple Watch is nearby, MakLock can automatically unlock protected apps without requiring Touch ID or a password. If the Watch moves out of range, apps will be locked again.")
-                    .font(MakLockTypography.caption)
-                    .foregroundColor(.secondary)
+                Text(
+                    "When your Apple Watch is nearby, MakLock can automatically unlock protected apps without requiring Touch ID or a password. Enable Range Lock to lock protected apps after a sustained Watch range loss."
+                )
+                .font(MakLockTypography.caption)
+                .foregroundColor(.secondary)
             }
         }
         .formStyle(.grouped)
@@ -148,9 +175,11 @@ struct WatchSettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Bluetooth Permission Required")
                         .font(MakLockTypography.body)
-                    Text("MakLock needs Bluetooth access to detect your Apple Watch. Grant permission in System Settings → Privacy & Security → Bluetooth.")
-                        .font(MakLockTypography.caption)
-                        .foregroundColor(.secondary)
+                    Text(
+                        "MakLock needs Bluetooth access to detect your Apple Watch. Grant permission in System Settings → Privacy & Security → Bluetooth."
+                    )
+                    .font(MakLockTypography.caption)
+                    .foregroundColor(.secondary)
                 }
             }
 

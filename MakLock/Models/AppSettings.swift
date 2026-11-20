@@ -23,6 +23,9 @@ struct AppSettings: Codable {
     /// Use Apple Watch proximity for auto-unlock.
     var useWatchUnlock: Bool = false
 
+    /// Lock protected apps after a sustained Apple Watch range loss.
+    var lockWhenWatchLeavesRange: Bool = false
+
     /// Watch RSSI threshold for proximity detection.
     /// Default: -70 dBm (~2-3 meters). Higher (less negative) = stricter.
     var watchRssiThreshold: Int = -70
@@ -32,4 +35,50 @@ struct AppSettings: Codable {
 
     /// Launch MakLock at login.
     var launchAtLogin: Bool = false
+
+    private enum CodingKeys: String, CodingKey {
+        case isProtectionEnabled
+        case lockOnSleep
+        case lockOnIdle
+        case idleTimeoutMinutes
+        case requireAuthOnLaunch
+        case requireAuthOnActivate
+        case useWatchUnlock
+        case lockWhenWatchLeavesRange
+        case watchRssiThreshold
+        case inactiveCloseMinutes
+        case launchAtLogin
+    }
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        self.init()
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        isProtectionEnabled =
+            try values.decodeIfPresent(Bool.self, forKey: .isProtectionEnabled)
+            ?? isProtectionEnabled
+        lockOnSleep = try values.decodeIfPresent(Bool.self, forKey: .lockOnSleep) ?? lockOnSleep
+        lockOnIdle = try values.decodeIfPresent(Bool.self, forKey: .lockOnIdle) ?? lockOnIdle
+        idleTimeoutMinutes =
+            try values.decodeIfPresent(Int.self, forKey: .idleTimeoutMinutes) ?? idleTimeoutMinutes
+        requireAuthOnLaunch =
+            try values.decodeIfPresent(Bool.self, forKey: .requireAuthOnLaunch)
+            ?? requireAuthOnLaunch
+        requireAuthOnActivate =
+            try values.decodeIfPresent(Bool.self, forKey: .requireAuthOnActivate)
+            ?? requireAuthOnActivate
+        useWatchUnlock =
+            try values.decodeIfPresent(Bool.self, forKey: .useWatchUnlock) ?? useWatchUnlock
+        lockWhenWatchLeavesRange =
+            try values.decodeIfPresent(Bool.self, forKey: .lockWhenWatchLeavesRange)
+            ?? lockWhenWatchLeavesRange
+        watchRssiThreshold =
+            try values.decodeIfPresent(Int.self, forKey: .watchRssiThreshold) ?? watchRssiThreshold
+        inactiveCloseMinutes =
+            try values.decodeIfPresent(Int.self, forKey: .inactiveCloseMinutes)
+            ?? inactiveCloseMinutes
+        launchAtLogin =
+            try values.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? launchAtLogin
+    }
 }

@@ -55,6 +55,7 @@ AppLocker (App Store) is sandboxed — it can only intercept app launches, not a
 - [x] Full-screen blur overlay on all monitors
 - [x] Auto-lock after idle timeout (configurable)
 - [x] Auto-lock on sleep/wake
+- [x] Configurable auto-lock when Apple Watch leaves range
 - [x] Auto-close inactive apps (prevents notification snooping)
 - [x] Close protected apps on sleep (privacy on shared laptops)
 - [x] Menu bar app (no Dock icon, runs silently)
@@ -115,7 +116,7 @@ Build and run with `Cmd+R`. Requires Xcode 15+ and macOS 13+.
 2. **Lock Overlay** — instantly shows a full-screen blur overlay on all displays
 3. **Authentication** — prompts Touch ID, checks Apple Watch proximity, or asks for password
 4. **Re-lock on quit** — Cmd+Q clears authentication, so the next launch requires re-auth (even for apps that stay alive in background like Messages)
-5. **Auto-lock** — re-locks on idle timeout, sleep, or when Apple Watch leaves range
+5. **Auto-lock** — re-locks on idle timeout, sleep, or a sustained Apple Watch range loss when Range Lock is enabled
 6. **Auto-close** — optionally terminates inactive protected apps to prevent notification snooping
 
 ## Architecture

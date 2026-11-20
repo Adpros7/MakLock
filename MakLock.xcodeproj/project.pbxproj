@@ -54,6 +54,7 @@
 		A10000000000000000001001 /* SettingsAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000001011 /* SettingsAuthService.swift */; };
 		A10000000000000000001101 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000001111 /* UpdateService.swift */; };
 		A10000000000000000001203 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000001202 /* Sparkle */; };
+		A10000000000000000001301 /* WatchRangeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000001311 /* WatchRangeMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -105,6 +106,7 @@
 		A10000000000000000000E11 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A10000000000000000001011 /* SettingsAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAuthService.swift; sourceTree = "<group>"; };
 		A10000000000000000001111 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
+		A10000000000000000001311 /* WatchRangeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRangeMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +188,7 @@
 				A10000000000000000000A11 /* IdleMonitorService.swift */,
 				A10000000000000000000B11 /* SleepWakeService.swift */,
 				A10000000000000000000C11 /* WatchProximityService.swift */,
+				A10000000000000000001311 /* WatchRangeMonitor.swift */,
 				4D8AAF1355AD0ACA8137F01D /* AppInactivityService.swift */,
 				A10000000000000000001011 /* SettingsAuthService.swift */,
 				A10000000000000000001111 /* UpdateService.swift */,
@@ -403,6 +406,7 @@
 				A10000000000000000000205 /* Defaults.swift in Sources */,
 				A10000000000000000000206 /* KeychainManager.swift in Sources */,
 				A10000000000000000000301 /* SafetyManager.swift in Sources */,
+				A10000000000000000001301 /* WatchRangeMonitor.swift in Sources */,
 				A10000000000000000000401 /* MenuBarController.swift in Sources */,
 				A10000000000000000000402 /* AppDelegate.swift in Sources */,
 				A10000000000000000000403 /* MenuBarView.swift in Sources */,

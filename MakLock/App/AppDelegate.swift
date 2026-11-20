@@ -12,7 +12,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         UpdateService.shared.start()
 
         // Request notification permission (for Watch unlock notifications)
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
+        }
 
         // Show onboarding on first launch
         OnboardingWindowController.shared.showIfNeeded()
@@ -31,7 +32,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // Auto-unlock if Watch is in range AND unlocked (on wrist).
             // If Watch is nearby but locked/off wrist, fall through to Touch ID.
             let watch = WatchProximityService.shared
-            let watchCanUnlock = Defaults.shared.appSettings.useWatchUnlock
+            let watchCanUnlock =
+                Defaults.shared.appSettings.useWatchUnlock
                 && watch.isWatchInRange
                 && (watch.isWatchUnlocked ?? true)
             if watchCanUnlock {
@@ -106,8 +108,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.menuBarController.iconState = .active
         }
 
-        // Wire up Watch proximity → lock/close when Watch leaves range
+        // Lock only when the user has explicitly enabled Watch range locking.
         WatchProximityService.shared.onWatchOutOfRange = { [weak self] in
+            guard Defaults.shared.appSettings.lockWhenWatchLeavesRange else { return }
             self?.lockOrCloseProtectedApps()
         }
 
