@@ -119,7 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Lock / Close Helpers
 
     /// Lock or close all running protected apps.
-    /// Apps with autoClose → forceTerminate. Others → overlay (if showOverlays is true).
+    /// Apps with autoClose terminate; all other protected apps are hidden.
     private func lockOrCloseProtectedApps(showOverlays: Bool = true) {
         AppMonitorService.shared.clearAllAuthentications()
         let runningBundleIDs = Set(NSWorkspace.shared.runningApplications.map(\.bundleIdentifier))
@@ -127,7 +127,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             $0.isEnabled && runningBundleIDs.contains($0.bundleIdentifier)
         }
 
-        var showedOverlay = false
+        var hidProtectedApp = false
         for app in apps {
             if app.autoClose && !SafetyManager.isBlacklisted(app.bundleIdentifier) {
                 if let running = NSWorkspace.shared.runningApplications.first(where: {
@@ -137,12 +137,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     NSLog("[MakLock] Auto-closed: %@ (%@)", app.name, app.bundleIdentifier)
                 }
             } else if showOverlays {
-                OverlayWindowService.shared.show(for: app)
-                showedOverlay = true
+                OverlayWindowService.shared.lock(app)
+                hidProtectedApp = true
             }
         }
 
-        if showedOverlay {
+        if hidProtectedApp {
             menuBarController.iconState = .locked
         }
     }

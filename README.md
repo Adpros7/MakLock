@@ -21,9 +21,9 @@
 
 ## What is MakLock?
 
-MakLock is a lightweight menu bar app that protects your macOS applications with Touch ID, Apple Watch proximity, or a backup password. When someone tries to open or switch to a protected app, MakLock blocks access with a blur overlay and requires authentication.
+MakLock is a lightweight menu bar app that protects your macOS applications with Touch ID, Apple Watch proximity, or a backup password. When a protected app is locked, MakLock hides it and requires authentication before restoring it.
 
-Unlike App Store alternatives, MakLock is distributed directly — giving it full overlay and process management capabilities that sandboxed apps simply cannot offer.
+Unlike App Store alternatives, MakLock is distributed directly — giving it application monitoring and process management capabilities that sandboxed apps cannot offer.
 
 ## Why MakLock?
 
@@ -34,8 +34,7 @@ Unlike App Store alternatives, MakLock is distributed directly — giving it ful
 | **Touch ID** | **Yes** | Paid only | No |
 | **Lock on app switch** | **Yes** | No (launch only) | Yes (direct version) |
 | **Apple Watch unlock** | **Yes** (wrist detection) | No | No |
-| **Full-screen overlay** | **Yes** (blur, all monitors) | Yes (solid, single monitor) | Dialog box |
-| **No content flash** | **Yes** (NSPanel) | No (brief flash on launch) | N/A |
+| **App-scoped lock dialog** | **Yes** | Yes (solid, single monitor) | Dialog box |
 | **Auto-close apps** | **Yes** | No (sandbox) | Yes (direct version) |
 | **Close apps on sleep** | **Yes** | No | No |
 | **Auto-lock on idle** | **Yes** | No | Yes |
@@ -45,14 +44,14 @@ Unlike App Store alternatives, MakLock is distributed directly — giving it ful
 | **Bypass resistant** | **Yes** | No (Bundle ID edit) | Unknown |
 | **Can't be deleted without auth** | N/A | No (sandbox) | Yes (direct version) |
 
-AppLocker (App Store) is sandboxed — it can only intercept app launches, not activations. If an app is already running, switching back shows content without authentication. Its overlay can also freeze the entire Mac, requiring a hard reboot. MakLock uses a non-activating NSPanel overlay that never steals focus, preventing these issues.
+AppLocker (App Store) is sandboxed — it can only intercept app launches, not activations. MakLock monitors both launches and switches, hides a locked protected app, and restores it only after authentication.
 
 ## Features
 
 - [x] Lock apps with Touch ID (single prompt)
 - [x] Password fallback for Macs without Touch ID
 - [x] Apple Watch proximity unlock with wrist detection
-- [x] Full-screen blur overlay on all monitors
+- [x] Compact per-app lock dialog
 - [x] Auto-lock after idle timeout (configurable)
 - [x] Auto-lock on sleep/wake
 - [x] Configurable auto-lock when Apple Watch leaves range
@@ -66,14 +65,9 @@ AppLocker (App Store) is sandboxed — it can only intercept app launches, not a
 - [x] Settings with tabbed UI
 - [x] Automatic updates via Sparkle 2
 - [ ] Trusted Wi-Fi auto-unlock *(coming in v1.1)*
-- [ ] Per-window overlay *(coming in v1.2)*
 
 ## Screenshots
 
-<p align="center">
-  <img src="Resources/screenshots/overlay.png" width="720" alt="Lock overlay">
-  <br><em>Full-screen blur overlay with Touch ID unlock</em>
-</p>
 
 <p align="center">
   <img src="Resources/screenshots/settings.png" width="560" alt="Settings window">
@@ -113,7 +107,7 @@ Build and run with `Cmd+R`. Requires Xcode 15+ and macOS 13+.
 ## How It Works
 
 1. **App Monitor** — watches for protected app launches and activations via NSWorkspace
-2. **Lock Overlay** — instantly shows a full-screen blur overlay on all displays
+2. **App Lock** — hides protected apps and presents a compact authentication dialog when they are reopened
 3. **Authentication** — prompts Touch ID, checks Apple Watch proximity, or asks for password
 4. **Re-lock on quit** — Cmd+Q clears authentication, so the next launch requires re-auth (even for apps that stay alive in background like Messages)
 5. **Auto-lock** — re-locks on idle timeout, sleep, or a sustained Apple Watch range loss when Range Lock is enabled
@@ -127,7 +121,7 @@ MakLock is a native Swift/SwiftUI application distributed outside the App Store 
 MakLock/
   App/        Entry point, AppDelegate
   Core/       Services (AppMonitor, Auth, Watch, Overlay, Idle, Sleep, Inactivity)
-  UI/         Design system, Components, Settings, Lock Overlay
+  UI/         Design system, Components, Settings, Lock Dialog
   Models/     Data models (ProtectedApp, AppSettings, LockSession)
   Resources/  Assets, Info.plist, Entitlements
 ```
@@ -138,9 +132,9 @@ MakLock/
 
 MakLock includes multiple safety mechanisms to ensure you never get locked out:
 
-- **Panic key** — `Cmd+Option+Shift+Control+U` instantly dismisses all overlays
+- **Panic key** — `Cmd+Option+Shift+Control+U` dismisses the active lock dialog
 - **System blacklist** — Terminal, Xcode, Activity Monitor, and other critical apps can never be locked
-- **Timeout failsafe** — overlays auto-dismiss after 60 seconds without interaction
+- **Timeout failsafe** — the lock dialog auto-dismisses after 60 seconds without interaction
 - **Dev mode** — DEBUG builds include a Skip button and 10-second auto-dismiss
 
 ## Requirements
