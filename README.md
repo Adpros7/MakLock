@@ -21,9 +21,9 @@
 
 ## What is MakLock?
 
-MakLock is a lightweight menu bar app that protects your macOS applications with Touch ID, Apple Watch proximity, or a backup password. When a protected app is locked, MakLock hides it and requires authentication before restoring it.
+MakLock is a lightweight menu bar app that protects your macOS applications with Touch ID, Apple Watch proximity, or a backup password. When a locked app comes to the front, MakLock places a shield over that app's window and requires authentication.
 
-Unlike App Store alternatives, MakLock is distributed directly — giving it application monitoring and process management capabilities that sandboxed apps cannot offer.
+Window shields follow protected-app moves and resizes through macOS Accessibility permission.
 
 ## Why MakLock?
 
@@ -34,7 +34,7 @@ Unlike App Store alternatives, MakLock is distributed directly — giving it app
 | **Touch ID** | **Yes** | Paid only | No |
 | **Lock on app switch** | **Yes** | No (launch only) | Yes (direct version) |
 | **Apple Watch unlock** | **Yes** (wrist detection) | No | No |
-| **App-scoped lock dialog** | **Yes** | Yes (solid, single monitor) | Dialog box |
+| **App-window lock shield** | **Yes** (Accessibility) | Yes (solid, single monitor) | Dialog box |
 | **Auto-close apps** | **Yes** | No (sandbox) | Yes (direct version) |
 | **Close apps on sleep** | **Yes** | No | No |
 | **Auto-lock on idle** | **Yes** | No | Yes |
@@ -44,14 +44,14 @@ Unlike App Store alternatives, MakLock is distributed directly — giving it app
 | **Bypass resistant** | **Yes** | No (Bundle ID edit) | Unknown |
 | **Can't be deleted without auth** | N/A | No (sandbox) | Yes (direct version) |
 
-AppLocker (App Store) is sandboxed — it can only intercept app launches, not activations. MakLock monitors both launches and switches, hides a locked protected app, and restores it only after authentication.
+AppLocker (App Store) is sandboxed — it can only intercept app launches, not activations. MakLock monitors both launches and switches, then shields only the protected app window when it becomes active.
 
 ## Features
 
 - [x] Lock apps with Touch ID (single prompt)
 - [x] Password fallback for Macs without Touch ID
 - [x] Apple Watch proximity unlock with wrist detection
-- [x] Compact per-app lock dialog
+- [x] Accessibility-tracked app-window lock shield
 - [x] Auto-lock after idle timeout (configurable)
 - [x] Auto-lock on sleep/wake
 - [x] Configurable auto-lock when Apple Watch leaves range
@@ -107,7 +107,7 @@ Build and run with `Cmd+R`. Requires Xcode 15+ and macOS 13+.
 ## How It Works
 
 1. **App Monitor** — watches for protected app launches and activations via NSWorkspace
-2. **App Lock** — hides protected apps and presents a compact authentication dialog when they are reopened
+2. **App Lock** — tracks the protected app's focused window and shields it when the app is activated
 3. **Authentication** — prompts Touch ID, checks Apple Watch proximity, or asks for password
 4. **Re-lock on quit** — Cmd+Q clears authentication, so the next launch requires re-auth (even for apps that stay alive in background like Messages)
 5. **Auto-lock** — re-locks on idle timeout, sleep, or a sustained Apple Watch range loss when Range Lock is enabled
@@ -132,9 +132,9 @@ MakLock/
 
 MakLock includes multiple safety mechanisms to ensure you never get locked out:
 
-- **Panic key** — `Cmd+Option+Shift+Control+U` dismisses the active lock dialog
+- **Panic key** — `Cmd+Option+Shift+Control+U` dismisses the active window shield
 - **System blacklist** — Terminal, Xcode, Activity Monitor, and other critical apps can never be locked
-- **Timeout failsafe** — the lock dialog auto-dismisses after 60 seconds without interaction
+- **Timeout failsafe** — the window shield auto-dismisses after 60 seconds without interaction
 - **Dev mode** — DEBUG builds include a Skip button and 10-second auto-dismiss
 
 ## Requirements

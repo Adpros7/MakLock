@@ -7,6 +7,7 @@ struct LockOverlayView: View {
     let bundleIdentifier: String
     let isPrimary: Bool
     let onDismiss: () -> Void
+    let onCancel: () -> Void
 
     @State private var isVisible = false
     @State private var showPasswordInput = false
@@ -34,7 +35,7 @@ struct LockOverlayView: View {
                         onDismiss()
                     },
                     onCancel: {
-                        showPasswordInput = false
+                        onCancel()
                     }
                 )
                 .transition(.opacity)
@@ -77,16 +78,20 @@ struct LockOverlayView: View {
                                 showPasswordInput = true
                             }
                         }
+
+                        SecondaryButton("Cancel") {
+                            onCancel()
+                        }
                     }
 
                     // Dev mode skip button
                     #if DEBUG
-                    Button("Skip (Dev)") {
-                        onDismiss()
-                    }
-                    .font(MakLockTypography.caption)
-                    .foregroundColor(MakLockColors.error)
-                    .padding(.top, 8)
+                        Button("Skip (Dev)") {
+                            onDismiss()
+                        }
+                        .font(MakLockTypography.caption)
+                        .foregroundColor(MakLockColors.error)
+                        .padding(.top, 8)
                     #endif
                 }
                 .padding(40)
@@ -133,7 +138,7 @@ struct LockOverlayView: View {
                 authState = .waitingForUser
                 errorMessage = error.localizedDescription
             case .cancelled:
-                authState = .waitingForUser
+                onCancel()
             }
         }
     }

@@ -9,7 +9,7 @@ enum WatchProximityFeatureTests {
     ignoresTransientWeakSignal()
     locksAfterContinuousSignalAbsence()
     locksOnSwitchWhenRangeLockIsEnabled()
-    usesCompactLockPanel()
+    usesProtectedAppWindowBounds()
   }
 
   private static func preservesExistingSettingsWhenRangeLockSettingIsMissing() throws {
@@ -93,18 +93,16 @@ enum WatchProximityFeatureTests {
       "range lock must require authentication after every app switch")
   }
 
-  private static func usesCompactLockPanel() {
-    guard let screen = NSScreen.main else {
-      fatalError("A macOS screen is required to verify the lock panel")
-    }
+  private static func usesProtectedAppWindowBounds() {
+    let protectedAppFrame = NSRect(x: 100, y: 100, width: 700, height: 500)
+    let panel = LockOverlayWindow(frame: protectedAppFrame)
 
-    let panel = LockOverlayWindow(for: screen)
     expect(
-      panel.frame.width < screen.visibleFrame.width,
-      "the lock UI must be an app-sized panel, not a full-screen overlay")
+      panel.frame.equalTo(protectedAppFrame),
+      "the lock shield must match the protected app window")
     expect(
-      panel.level != .screenSaver,
-      "the lock UI must not cover the entire desktop above system UI")
+      panel.level.rawValue == NSWindow.Level.normal.rawValue + 1,
+      "the lock shield must stay one level above the protected app, not above the desktop")
   }
 
   private static func expect(_ condition: Bool, _ message: String) {

@@ -7,6 +7,7 @@ final class OverlayWindowService {
 
   private var overlayWindows: [LockOverlayWindow] = []
   private var timeoutTimer: Timer?
+  private var trackingTimer: Timer?
   private var currentApp: ProtectedApp?
 
   /// Callback when overlay is dismissed after successful authentication.
@@ -23,16 +24,20 @@ final class OverlayWindowService {
     )
   }
 
-  /// Show a compact authentication panel after a protected app is reopened.
+  /// Shield the active protected app's focused window.
   func show(for app: ProtectedApp) {
     guard overlayWindows.isEmpty else { return }
+    guard let frame = AppWindowTracker.shared.frame(for: app.bundleIdentifier) else {
+      lock(app)
+      return
+    }
 
     currentApp = app
-    lock(app)
-    createOverlayWindows(for: app)
+    createOverlayWindows(for: app, frame: frame)
+    startWindowTracking()
     startTimeoutTimer()
 
-    NSLog("[MakLock] Lock panel shown for: %@", app.name)
+    NSLog("[MakLock] Window shield shown for: %@", app.name)
   }
 
   /// Hide a protected app without presenting any full-screen UI.
@@ -47,24 +52,18 @@ final class OverlayWindowService {
     NSLog("[MakLock] Protected app hidden: %@", app.name)
   }
 
-  /// Hide all overlay windows.
+  /// Restore a protected app after successful authentication.
   func hide() {
     stopTimeoutTimer()
-
-    // Cancel any in-progress Touch ID evaluation
+    stopWindowTracking()
     AuthenticationService.shared.cancelAuthentication()
 
-    // Mark the app as authenticated so it won't re-lock immediately
     if let app = currentApp {
       AppMonitorService.shared.markAuthenticated(app.bundleIdentifier)
     }
 
-    overlayWindows.forEach { $0.close() }
-    overlayWindows.removeAll()
+    closeWindows()
 
-    // Activate the protected app now that overlays are gone.
-    // Small delay ensures overlay panels and Touch ID dialog are fully dismissed
-    // before attempting to bring the app forward.
     if let bundleID = currentApp?.bundleIdentifier {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
         self?.activateProtectedApp(bundleIdentifier: bundleID)
@@ -72,12 +71,27 @@ final class OverlayWindowService {
     }
 
     currentApp = nil
-    NSLog("[MakLock] Overlay dismissed")
+    NSLog("[MakLock] Window shield dismissed after authentication")
   }
 
-  /// Dismiss all overlays (used by panic key).
+  /// Dismiss a cancelled shield and keep its protected app hidden.
+  func cancel() {
+    stopTimeoutTimer()
+    stopWindowTracking()
+    AuthenticationService.shared.cancelAuthentication()
+
+    if let app = currentApp {
+      lock(app)
+    }
+
+    closeWindows()
+    currentApp = nil
+    NSLog("[MakLock] Window shield cancelled")
+  }
+
+  /// Dismiss the active lock shield without authenticating.
   func dismissAll() {
-    hide()
+    cancel()
   }
 
   /// Whether an overlay is currently displayed.
@@ -113,20 +127,12 @@ final class OverlayWindowService {
     NSApp.activate(ignoringOtherApps: true)
   }
 
-  // MARK: - Screen Management
-
   @objc private func screensDidChange(_ notification: Notification) {
-    guard let lockWindow = overlayWindows.first,
-      let screen = NSScreen.main ?? NSScreen.screens.first
-    else { return }
-
-    lockWindow.reposition(to: screen)
+    updateWindowShieldFrame()
   }
 
-  private func createOverlayWindows(for app: ProtectedApp) {
-    guard let screen = NSScreen.main ?? NSScreen.screens.first else { return }
-
-    let window = LockOverlayWindow(for: screen)
+  private func createOverlayWindows(for app: ProtectedApp, frame: NSRect) {
+    let window = LockOverlayWindow(frame: frame)
     let lockView = LockOverlayView(
       appName: app.name,
       bundleIdentifier: app.bundleIdentifier,
@@ -135,12 +141,50 @@ final class OverlayWindowService {
         let name = self?.currentApp?.name ?? "app"
         self?.hide()
         self?.onUnlocked?(name)
+      },
+      onCancel: { [weak self] in
+        self?.cancel()
       }
     )
 
     window.contentView = NSHostingView(rootView: lockView)
     window.orderFrontRegardless()
     overlayWindows = [window]
+  }
+
+  private func startWindowTracking() {
+    trackingTimer?.invalidate()
+    trackingTimer = Timer(timeInterval: 1.0 / 15.0, repeats: true) { [weak self] _ in
+      self?.updateWindowShieldFrame()
+    }
+    RunLoop.main.add(trackingTimer!, forMode: .common)
+  }
+
+  private func stopWindowTracking() {
+    trackingTimer?.invalidate()
+    trackingTimer = nil
+  }
+
+  private func updateWindowShieldFrame() {
+    guard let app = currentApp else { return }
+    guard
+      let runningApp = NSWorkspace.shared.runningApplications.first(where: {
+        $0.bundleIdentifier == app.bundleIdentifier
+      }), runningApp.isActive
+    else {
+      cancel()
+      return
+    }
+    guard let frame = AppWindowTracker.shared.frame(for: app.bundleIdentifier),
+      let window = overlayWindows.first
+    else { return }
+
+    window.reposition(to: frame)
+  }
+
+  private func closeWindows() {
+    overlayWindows.forEach { $0.close() }
+    overlayWindows.removeAll()
   }
 
   // MARK: - App Window Management

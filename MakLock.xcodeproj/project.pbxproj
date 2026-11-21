@@ -56,6 +56,7 @@
 		A10000000000000000001203 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000001202 /* Sparkle */; };
 		A10000000000000000001301 /* WatchRangeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000001311 /* WatchRangeMonitor.swift */; };
 		A10000000000000000001401 /* AppLockPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000001411 /* AppLockPolicy.swift */; };
+		A10000000000000000001501 /* AppWindowTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000001511 /* AppWindowTracker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -109,6 +110,7 @@
 		A10000000000000000001111 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
 		A10000000000000000001311 /* WatchRangeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRangeMonitor.swift; sourceTree = "<group>"; };
 		A10000000000000000001411 /* AppLockPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockPolicy.swift; sourceTree = "<group>"; };
+		A10000000000000000001511 /* AppWindowTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWindowTracker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +194,7 @@
 				A10000000000000000000C11 /* WatchProximityService.swift */,
 				A10000000000000000001311 /* WatchRangeMonitor.swift */,
 				A10000000000000000001411 /* AppLockPolicy.swift */,
+				A10000000000000000001511 /* AppWindowTracker.swift */,
 				4D8AAF1355AD0ACA8137F01D /* AppInactivityService.swift */,
 				A10000000000000000001011 /* SettingsAuthService.swift */,
 				A10000000000000000001111 /* UpdateService.swift */,
@@ -411,6 +414,7 @@
 				A10000000000000000000301 /* SafetyManager.swift in Sources */,
 				A10000000000000000001301 /* WatchRangeMonitor.swift in Sources */,
 				A10000000000000000001401 /* AppLockPolicy.swift in Sources */,
+				A10000000000000000001501 /* AppWindowTracker.swift in Sources */,
 				A10000000000000000000401 /* MenuBarController.swift in Sources */,
 				A10000000000000000000402 /* AppDelegate.swift in Sources */,
 				A10000000000000000000403 /* MenuBarView.swift in Sources */,
