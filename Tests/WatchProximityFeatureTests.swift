@@ -7,6 +7,7 @@ enum WatchProximityFeatureTests {
     locksOnlyAfterSustainedWeakSignal()
     ignoresTransientWeakSignal()
     locksAfterContinuousSignalAbsence()
+    locksOnSwitchWhenRangeLockIsEnabled()
   }
 
   private static func preservesExistingSettingsWhenRangeLockSettingIsMissing() throws {
@@ -74,6 +75,20 @@ enum WatchProximityFeatureTests {
     expect(
       monitor.evaluateStaleness(at: start.addingTimeInterval(20)) == nil,
       "range loss must emit once")
+  }
+
+  private static func locksOnSwitchWhenRangeLockIsEnabled() {
+    var settings = AppSettings()
+    settings.requireAuthOnLaunch = false
+    settings.requireAuthOnActivate = false
+    settings.lockWhenWatchLeavesRange = true
+
+    expect(
+      !AppLockPolicy.requiresAuthentication(for: .launch, settings: settings),
+      "range lock must not change launch policy")
+    expect(
+      AppLockPolicy.requiresAuthentication(for: .activation, settings: settings),
+      "range lock must require authentication after every app switch")
   }
 
   private static func expect(_ condition: Bool, _ message: String) {
