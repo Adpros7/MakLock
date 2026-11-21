@@ -88,31 +88,6 @@ struct WatchSettingsView: View {
                     }
                 }
 
-                Section("Sensitivity") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Range:")
-                            Slider(value: $sensitivity, in: 0...100, step: 10)
-                                .onChange(of: sensitivity) { value in
-                                    let rssi = Int(-90 + (value / 100.0) * 40)
-                                    watchService.rssiThreshold = rssi
-                                    var s = Defaults.shared.appSettings
-                                    s.watchRssiThreshold = rssi
-                                    Defaults.shared.appSettings = s
-                                }
-                            Text(sensitivityLabel)
-                                .frame(width: 50, alignment: .trailing)
-                                .font(MakLockTypography.caption)
-                                .monospacedDigit()
-                        }
-
-                        Text(
-                            "Lower sensitivity means the Watch can be farther away. Higher sensitivity requires the Watch to be closer."
-                        )
-                        .font(MakLockTypography.caption)
-                        .foregroundColor(.secondary)
-                    }
-                }
             }
             Section("Range Lock") {
                 Toggle(
@@ -128,6 +103,26 @@ struct WatchSettingsView: View {
                 )
                 .font(MakLockTypography.caption)
                 .foregroundColor(.secondary)
+            }
+            Section("Lock Distance") {
+                HStack {
+                    Text("Range:")
+                    Slider(value: $sensitivity, in: 0...100, step: 10)
+                        .onChange(of: sensitivity) { value in
+                            let rssi = Int(-90 + (value / 100.0) * 40)
+                            watchService.rssiThreshold = rssi
+                            settings.watchRssiThreshold = rssi
+                            Defaults.shared.appSettings = settings
+                        }
+                    Text(sensitivityLabel)
+                        .frame(width: 50, alignment: .trailing)
+                        .font(MakLockTypography.caption)
+                        .monospacedDigit()
+                }
+
+                Text("Far allows more distance before locking. Close locks sooner.")
+                    .font(MakLockTypography.caption)
+                    .foregroundColor(.secondary)
             }
 
             Section("How it works") {
