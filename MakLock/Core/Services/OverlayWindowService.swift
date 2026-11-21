@@ -28,7 +28,7 @@ final class OverlayWindowService {
   func show(for app: ProtectedApp) {
     guard overlayWindows.isEmpty else { return }
     guard let frame = AppWindowTracker.shared.frame(for: app.bundleIdentifier) else {
-      lock(app)
+      NSLog("[MakLock] Accessibility frame unavailable for: %@", app.name)
       return
     }
 
@@ -168,9 +168,9 @@ final class OverlayWindowService {
   private func updateWindowShieldFrame() {
     guard let app = currentApp else { return }
     guard
-      let runningApp = NSWorkspace.shared.runningApplications.first(where: {
+      NSWorkspace.shared.runningApplications.contains(where: {
         $0.bundleIdentifier == app.bundleIdentifier
-      }), runningApp.isActive
+      })
     else {
       cancel()
       return
