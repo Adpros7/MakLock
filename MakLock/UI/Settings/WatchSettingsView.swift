@@ -88,22 +88,6 @@ struct WatchSettingsView: View {
                     }
                 }
 
-                Section("Range Lock") {
-                    Toggle(
-                        "Lock protected apps when Watch leaves range",
-                        isOn: $settings.lockWhenWatchLeavesRange
-                    )
-                    .onChange(of: settings.lockWhenWatchLeavesRange) { _ in
-                        Defaults.shared.appSettings = settings
-                    }
-
-                    Text(
-                        "MakLock waits for three weak readings or 15 seconds without a signal. Bluetooth reconnects alone never lock your apps."
-                    )
-                    .font(MakLockTypography.caption)
-                    .foregroundColor(.secondary)
-                }
-
                 Section("Sensitivity") {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -129,6 +113,21 @@ struct WatchSettingsView: View {
                         .foregroundColor(.secondary)
                     }
                 }
+            }
+            Section("Range Lock") {
+                Toggle(
+                    "Lock protected apps when Watch leaves range",
+                    isOn: $settings.lockWhenWatchLeavesRange
+                )
+                .onChange(of: settings.lockWhenWatchLeavesRange) { _ in
+                    Defaults.shared.appSettings = settings
+                }
+
+                Text(
+                    "Turn on Apple Watch unlock to activate Range Lock. MakLock waits for three weak readings or 15 seconds without a signal; Bluetooth reconnects alone never lock your apps."
+                )
+                .font(MakLockTypography.caption)
+                .foregroundColor(.secondary)
             }
 
             Section("How it works") {
